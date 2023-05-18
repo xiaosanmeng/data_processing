@@ -56,11 +56,12 @@ for vehiclelistitem in vehiclelist:
                              'flowType': flowType}
                 traffic_flow.append(flow_dict)
 
-# 将traffic_flow列表拼接成一个DataFrame
+## 将traffic_flow列表拼接成一个DataFrame
 df = pd.concat([df, pd.DataFrame(traffic_flow)])
 
-# 将结果输出为.csv文件
-df.to_csv("1traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.csv", index=False)
+## 将结果输出为.csv文件
+df.to_csv("traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.csv", index=False)
+#df.to_excel("traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.xlsx", index=False)
 ##打开处理结果进行可视化操作
 df  = pd.read_csv('1traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.csv',
                   parse_dates=['date_time'],dtype={'timesce':'datetime64[ns]'})
