@@ -1,0 +1,103 @@
+import pandas as pd
+import json
+import matplotlib.pyplot as plt
+import time
+import csv
+import matplotlib
+#import multiplel
+# 读取数据
+vehiclelist = []
+traffic_flow = []
+with open(
+        'traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.txt',
+        'r', encoding='utf-8') as file:
+    for line in file:
+        data = json.loads(line)
+        vehiclelist.append(data)
+df = pd.DataFrame()
+for vehiclelistitem in vehiclelist:
+    timestamp = vehiclelistitem['timeSec']
+    date_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+    timeType = vehiclelistitem['timeType']
+    roadId = vehiclelistitem['roadId']
+    for branchitem in vehiclelistitem['laneData']['branchDataList']:
+        branchId = branchitem['branchId']
+        for laneData_item in branchitem['laneData']:
+            laneTurnType = laneData_item['laneTurnType']
+            laneId = laneData_item['laneId']
+            laneOccupationRatio = laneData_item['laneOccupationRatio']
+            for flow in laneData_item['flowData']:
+                queueCount = flow['queueCount']
+                queueLength = flow['queueLength']
+                greenTime = flow['greenTime']
+                trafficFlow = flow['trafficFlow']
+                wastTime = flow['wastTime']
+                trafficNumber = flow['trafficNumber']
+                flowType = flow['flowType']
+                flow_dict = {'timeSec': timestamp, 'date_time': date_time, 'timeType': timeType, 'roadId': roadId,
+                             'laneTurnType': laneTurnType, 'laneId': laneId, 'laneOccupationRatio': laneOccupationRatio,
+                             'queueCount': queueCount,
+                             'queueLength': queueLength, 'greenTime': greenTime, 'trafficFlow': trafficFlow,
+                             'wastTime': wastTime, 'trafficNumber': trafficNumber, 'flowType': flowType}
+                traffic_flow.append(flow_dict)
+df = pd.concat([df, pd.DataFrame(traffic_flow)])
+df.to_csv("1traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.csv", index=False)
+df  = pd.read_csv('1traffic_indicators_CS_0143_NG_NB1520309188_NB1520309188_20230321170000_20230321190000.csv',
+                  parse_dates=['date_time'],dtype={'timesce':'datetime64[ns]'})
+## 以时间轴
+df  = df.set_index('date_time')
+##1绘制排队车辆数随时间变化图
+plt.plot(df.index,df['queueCount'])
+##设置x轴的格式
+plt.xlabel('date_time')
+plt.xticks(rotation=45,ha='right')
+##设置y轴的标签
+plt.ylabel('queueCount')
+#显示图形
+plt.show()
+##2绘制折线图
+plt.plot(df.index,df['queueLength'])
+##设置x轴的格式
+plt.xlabel('date_time')
+plt.xticks(rotation=45,ha='right')
+##设置y轴的标签
+plt.ylabel('queueLength')
+#显示图形
+plt.show()
+
+##3绘制绿灯时间随时间变化图
+plt.plot(df.index,df['greenTime'])
+##设置x轴的格式
+plt.xlabel('date_time')
+plt.xticks(rotation=45,ha='right')
+##设置y轴的标签
+plt.ylabel('greenTime')
+#显示图形
+plt.show()
+##4绘制交通流量随时间变化图
+plt.plot(df.index,df['trafficFlow'])
+##设置x轴的格式
+plt.xlabel('date_time')
+plt.xticks(rotation=45,ha='right')
+##设置y轴的标签
+plt.ylabel('trafficFlow')
+#显示图形
+plt.show()
+##5绘制交通数量随时间变化图
+plt.plot(df.index,df['trafficNumber'])
+##设置x轴的格式
+plt.xlabel('date_time')
+plt.xticks(rotation=45,ha='right')
+##设置y轴的标签
+plt.ylabel('trafficNumber')
+#显示图形
+plt.show()
+##6绘制延误时间随时间变化图
+plt.plot(df.index,df['wastTime'])
+##设置x轴的格式
+plt.xlabel('date_time')
+plt.xticks(rotation=45,ha='right')
+##设置y轴的标签
+plt.ylabel('wastTime')
+#显示图形
+plt.show()
